@@ -591,19 +591,21 @@ body {
 }
 
 .browser-button-wrapper {
+  /* width: 100%; */
+  /* display: flex; */
   position: relative;
 }
 
 .browsers-dropdown {
   position: absolute;
-  top: 100%;
+  top: 30%;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(26, 31, 46, 0.95);
   border: 1px solid rgba(41, 98, 255, 0.2);
   border-radius: 12px;
   padding: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
