@@ -96,7 +96,7 @@ function App() {
     };
 
     updatePings();
-    const interval = setInterval(updatePings, 30000); // Обновляем каждые 30 секунд
+    const interval = setInterval(updatePings, 60000); // Обновляем каждые 30 секунд
 
     return () => clearInterval(interval);
   }, []);
@@ -125,10 +125,10 @@ function App() {
   ];
 
   const footerLinks = [
-    { name: 'Github', icon: '⚡' },
-    { name: 'Wiki', icon: '📚' },
-    { name: 'Купить VPN', icon: '💎' },
-    { name: 'Поддержка', icon: '🛟' },
+    { name: 'Github', icon: '⚡', url: 'https://github.com/Muhendalf-ru/pesherkino-vpn' },
+    { name: 'Wiki', icon: '📚', url: 'https://pesherkino-vpn.gitbook.io/pesherkino-vpn' },
+    { name: 'Купить VPN', icon: '💎', url: 'https://t.me/pesherkino_bot?start=ref_855347094' },
+    { name: 'Поддержка', icon: '🛟', url: 'https://t.me/pesherkino' },
   ];
 
   return (
@@ -221,11 +221,12 @@ function App() {
           </motion.div>
 
           <div className="button-container">
-            <motion.button
+            <motion.a
               className="download-button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              title="Доступно для Windows 10 и 11">
+              title="Доступно для Windows 10 и 11"
+              href="https://github.com/Muhendalf-ru/pesherkino-vpn/releases/download/v2.0.38/pesherkino-vpn-2.0.38-setup.exe">
               <svg
                 className="windows-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +239,7 @@ function App() {
                 />
               </svg>
               Скачать приложение
-            </motion.button>
+            </motion.a>
             <div className="browser-button-wrapper">
               <motion.button
                 className="download-button"
@@ -250,7 +251,10 @@ function App() {
               <motion.button
                 className="buy-button"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}>
+                whileTap={{ scale: 0.95 }}
+                onClick={() =>
+                  window.open('https://t.me/pesherkino_bot?start=ref_855347094', '_blank')
+                }>
                 <span>Купить VPN</span>
                 <svg
                   className="telegram-icon"
@@ -319,9 +323,19 @@ function App() {
               <p>Высокая скорость без ограничений</p>
             </div>
             <div className="feature">
-              <span className="feature-icon">🌐</span>
-              <h3>Доступ</h3>
-              <p>Доступ к заблокированным сайтам</p>
+              <span className="feature-icon">💬</span>
+              <h3>Чиним Discord бесплатно</h3>
+              <p>Без регистрации и лишних действий — просто скачайте и пользуйтесь.</p>
+            </div>
+            <div className="feature">
+              <span className="feature-icon">🛡️</span>
+              <h3>Прозрачная Open Source система</h3>
+              <p>Исходный код открыт для всех. Максимальная прозрачность и доверие.</p>
+            </div>
+            <div className="feature">
+              <span className="feature-icon">🤝</span>
+              <h3>Реферальная система</h3>
+              <p>Приглашайте друзей и получайте бонусы за каждого подключившегося!</p>
             </div>
           </motion.div>
 
@@ -385,7 +399,10 @@ function App() {
               <motion.button
                 className="pricing-button"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}>
+                whileTap={{ scale: 0.95 }}
+                onClick={() =>
+                  window.open('https://t.me/pesherkino_bot?start=ref_855347094', '_blank')
+                }>
                 Выбрать тариф
               </motion.button>
             </motion.div>
@@ -409,29 +426,105 @@ function App() {
               <motion.button
                 className="pricing-button"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}>
+                whileTap={{ scale: 0.95 }}
+                onClick={() =>
+                  window.open('https://t.me/pesherkino_bot?start=ref_855347094', '_blank')
+                }>
+                Выбрать тариф
+              </motion.button>
+            </motion.div>
+            <motion.div
+              className="pricing-card"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ scale: 1.05 }}>
+              <div className="pricing-header">
+                <h3>Discord Fix</h3>
+                <div className="price">Бесплатно</div>
+              </div>
+              <ul className="pricing-features">
+                <li>Локация - Германия, Франкфурт</li>
+                <li>Высокая скорость</li>
+                <li>Без ограничения по времени</li>
+                <li>Безлимитный трафик</li>
+              </ul>
+              <motion.button
+                className="pricing-button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() =>
+                  window.open('https://t.me/pesherkino_bot?start=ref_855347094', '_blank')
+                }>
                 Выбрать тариф
               </motion.button>
             </motion.div>
           </div>
         </div>
 
-        <footer className="footer">
+        <div className="footer">
           <div className="footer-content">
-            {footerLinks.map((link) => (
-              <motion.button
-                key={link.name}
-                className="footer-button"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}>
-                <span className="footer-icon">{link.icon}</span>
-                <span className="footer-text">{link.name}</span>
-              </motion.button>
-            ))}
+            {footerLinks.map((link) =>
+              link.url ? (
+                <motion.a
+                  key={link.name}
+                  className="footer-button"
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ textDecoration: 'none' }}>
+                  <span className="footer-icon">{link.icon}</span>
+                  <span className="footer-text">{link.name}</span>
+                </motion.a>
+              ) : (
+                <motion.button
+                  key={link.name}
+                  className="footer-button"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}>
+                  <span className="footer-icon">{link.icon}</span>
+                  <span className="footer-text">{link.name}</span>
+                </motion.button>
+              ),
+            )}
           </div>
           <div className="footer-divider"></div>
-          <div className="footer-copyright">© 2024 Pesherkino VPN. Все права защищены.</div>
-        </footer>
+          <div className="footer-copyright">© 2025 Pesherkino VPN. Все права защищены.</div>
+          <div className="footer-copyright">
+            Возникли проблемы, вопросы или предложения?
+            <a
+              href="https://t.me/your_support"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-support-link">
+              Техническая поддержка
+            </a>
+          </div>
+        </div>
+        {/* МАСКОТ ПОД ФУТЕРОМ */}
+        <motion.div className="mascot-block">
+          <img src="/mascot.png" alt="Маскот Pesherkino VPN" className="mascot-img" />
+          <motion.div
+            className="mascot-cloud"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0, rotate: [0, -2, 2, -1, 1, 0] }}
+            transition={{
+              opacity: { duration: 0.8, delay: 0.2 },
+              y: { type: 'spring', stiffness: 60, damping: 10, duration: 0.8, delay: 0.2 },
+              rotate: {
+                repeat: Infinity,
+                repeatType: 'loop',
+                duration: 3.5,
+                ease: 'easeInOut',
+                delay: 1.2,
+              },
+            }}
+            style={{ top: '-70px', position: 'relative' }}>
+            Мы поможем оставаться на связи!
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
