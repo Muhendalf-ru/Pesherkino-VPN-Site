@@ -4,35 +4,37 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.8.0
+      - name: Copy files to VPS via SSH
+        uses: appleboy/scp-action@v0.1.6
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: '.'
+          target: '/home/root/app'
 
-      - name: Deploy to VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            set -e
-            cd /home/react-app
-
-            echo "📥 Pull latest code..."
-            git pull origin main
-
-            echo "🛑 Stop and clean containers..."
+      - name: SSH & Rebuild Docker
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/root/app
+            echo "🛑 Останавливаем контейнеры..."
             docker compose down
-            docker container prune -f
-            docker image prune -f
 
-            echo "🚀 Build and start..."
-            docker compose up -d --build
-          EOF
+            echo "🧹 Удаляем неиспользуемые образы и остановленные контейнеры..."
+            docker system prune -a -f
+
+            echo "🚀 Собираем и запускаем..."
+            docker compose up --build -d
