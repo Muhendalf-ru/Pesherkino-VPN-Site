@@ -9,7 +9,7 @@ function App() {
     {
       name: 'Стокгольм',
       ping: '...',
-      flag: '🇸🇪',
+      flag: '/sweden.svg',
       hosts: [
         'https://api.spotify.com/v1/health', // Spotify API
         'https://api.ikea.com/health', // IKEA API
@@ -19,7 +19,7 @@ function App() {
     {
       name: 'Франкфурт',
       ping: '...',
-      flag: '🇩🇪',
+      flag: '/germany.svg',
       hosts: [
         'https://api.db.com/health', // Deutsche Bank API
         'https://api.commerzbank.de/health', // Commerzbank API
@@ -29,7 +29,7 @@ function App() {
     {
       name: 'Нидерланды',
       ping: '...',
-      flag: '🇳🇱',
+      flag: '/netherlands.svg',
       hosts: [
         'https://api.philips.com/health', // Philips API
         'https://api.klm.com/health', // KLM API
@@ -39,7 +39,7 @@ function App() {
     {
       name: 'Санкт-Петербург',
       ping: '...',
-      flag: '🇷🇺',
+      flag: '/russia.svg',
       hosts: [
         'https://spb.hh.ru', // HeadHunter СПб
         'https://spb.rutube.ru', // Rutube СПб
@@ -102,10 +102,26 @@ function App() {
   }, []);
 
   const browsers = [
-    { name: 'Firefox', icon: '🦊' },
-    { name: 'Yandex', icon: '🌐' },
-    { name: 'Chrome', icon: '🌍' },
-    { name: 'Edge', icon: '🌐' },
+    {
+      name: 'Firefox',
+      icon: '/firefox.svg',
+      url: 'https://addons.mozilla.org/firefox/addon/pesherkino-vpn/',
+    },
+    {
+      name: 'Yandex',
+      icon: '/yandex.svg',
+      url: 'https://addons.opera.com/extensions/details/pesherkino-vpn/',
+    },
+    {
+      name: 'Chrome',
+      icon: '/chrome.svg',
+      url: 'https://chrome.google.com/webstore/detail/pesherkino-vpn/',
+    },
+    {
+      name: 'Edge',
+      icon: '/edge.svg',
+      url: 'https://microsoftedge.microsoft.com/addons/detail/pesherkino-vpn/',
+    },
   ];
 
   const footerLinks = [
@@ -120,9 +136,10 @@ function App() {
       <div className="animated-background" />
       <div className="space-elements">
         <div className="comet" />
-        <div className="planet planet-1" />
-        <div className="planet planet-2" />
-        <div className="planet planet-3" />
+        <img src="/neptune.svg" alt="Neptune" className="planet planet-neptune" />
+        <img src="/planet.svg" alt="Planet 1" className="planet planet-1" />
+        <img src="/planet.svg" alt="Planet 2" className="planet planet-2" />
+        <img src="/planet.svg" alt="Planet 3" className="planet planet-3" />
 
         {/* Звезды */}
         {[...Array(50)].map((_, i) => (
@@ -258,8 +275,15 @@ function App() {
                         key={browser.name}
                         className="browser-button"
                         whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}>
-                        <span className="browser-icon">{browser.icon}</span>
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => window.open(browser.url, '_blank')}>
+                        <img
+                          src={browser.icon}
+                          alt={`${browser.name} icon`}
+                          className="browser-icon"
+                          width="24"
+                          height="24"
+                        />
                         <span>{browser.name}</span>
                       </motion.button>
                     ))}
@@ -319,7 +343,13 @@ function App() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}>
                 <div className="location-header">
-                  <span className="location-flag">{location.flag}</span>
+                  <img
+                    src={location.flag}
+                    alt={`${location.name} flag`}
+                    className="location-flag"
+                    width="32"
+                    height="24"
+                  />
                   <h3>{location.name}</h3>
                 </div>
                 <p className="ping-value">Пинг: {location.ping}</p>
