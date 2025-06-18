@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: '.'
-          target: '/home/root/app'
+          target: '/home/root/app' # замените на путь на VPS
 
       - name: SSH & Rebuild Docker
         uses: appleboy/ssh-action@v1.0.3
@@ -31,10 +31,8 @@ jobs:
           script: |
             cd /home/root/app
             echo "🛑 Останавливаем контейнеры..."
-            docker compose down
-
-            echo "🧹 Удаляем неиспользуемые образы и остановленные контейнеры..."
-            docker system prune -a -f
-
+            docker-compose down
+            echo "🧹 Очищаем неиспользуемые образы, контейнеры и тома..."
+            docker system prune -af --volumes
             echo "🚀 Собираем и запускаем..."
-            docker compose up --build -d
+            docker-compose up --build -d
