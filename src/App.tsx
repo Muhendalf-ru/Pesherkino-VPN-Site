@@ -221,12 +221,17 @@ function App() {
           </motion.div>
 
           <div className="button-container">
-            <motion.a
+            <motion.button
               className="download-button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               title="Доступно для Windows 10 и 11"
-              href="https://github.com/Muhendalf-ru/pesherkino-vpn/releases/download/v2.0.38/pesherkino-vpn-2.0.38-setup.exe">
+              onClick={() =>
+                window.open(
+                  'https://github.com/Muhendalf-ru/pesherkino-vpn/releases/download/v2.0.38/pesherkino-vpn-2.0.38-setup.exe',
+                  '_blank',
+                )
+              }>
               <svg
                 className="windows-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -239,7 +244,7 @@ function App() {
                 />
               </svg>
               Скачать приложение
-            </motion.a>
+            </motion.button>
             <div className="browser-button-wrapper">
               <motion.button
                 className="download-button"
