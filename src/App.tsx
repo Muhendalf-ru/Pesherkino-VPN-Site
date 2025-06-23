@@ -211,7 +211,7 @@ function App() {
                         <span className="highlight">GoodByeDPI</span>
                       </li>
                       <li>
-                        Подключиться во вкладке <span className="highlight">Discord Fix</span>
+                        Подключиться во вкладке <span className="highlight">Discord Free</span>
                       </li>
                     </ol>
                   </motion.div>
