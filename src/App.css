@@ -3377,3 +3377,43 @@ body.custom-cursor-enabled * {
   font-size: 12px;
   right: 18px;
 }
+
+.wiki-navigation .nav-list .nav-item .nav-link {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 1.2rem;
+  margin-bottom: 0.2rem;
+  background: none;
+  letter-spacing: 0.01em;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.wiki-navigation .nav-list .nav-item .nav-link:hover {
+  background: rgba(59, 130, 246, 0.09);
+  color: #a5b4fc;
+}
+
+.wiki-navigation .nav-list .nav-item .subnav-list {
+  margin-top: 0.1rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.1rem;
+  border-left: 2px solid rgba(59, 130, 246, 0.13);
+}
+
+.wiki-navigation .nav-list .nav-item .subnav-link {
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: #b0b8d0;
+  background: none;
+  margin: 0.1rem 0 0.1rem 0;
+  padding-left: 0.2rem;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.wiki-navigation .nav-list .nav-item .subnav-link:hover {
+  background: rgba(59, 130, 246, 0.07);
+  color: #fff;
+}
