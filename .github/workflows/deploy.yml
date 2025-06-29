@@ -36,4 +36,6 @@ jobs:
             echo "🧹 Очищаем неиспользуемые образы, контейнеры и тома..."
             docker system prune -af --volumes
             echo "🚀 Собираем и запускаем..."
-            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} docker-compose up --build -d
+            export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            docker-compose build
+            docker-compose up -d
