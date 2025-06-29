@@ -1,230 +1,338 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
+import { wikiData } from './wikiData';
+import type { SearchResult, WikiSection } from './wikiData';
 
-interface WikiSection {
-  id: string;
-  title: string;
-  content: string;
-  subsections?: WikiSection[];
-}
+// Компонент уведомления о копировании
+const CopyNotification = ({ isVisible }: { isVisible: boolean }) => {
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          className="copy-notification"
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: -20 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}>
+          <div className="copy-notification-content">
+            <svg
+              className="copy-notification-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2">
+              <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+            <span>Код скопирован!</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
-interface SearchResult {
-  sectionId: string;
-  sectionTitle: string;
-  subsectionId?: string;
-  subsectionTitle?: string;
-  matchedText: string;
-  context: string;
-  type: 'section' | 'subsection' | 'content';
-}
+// Компонент уведомления о копировании ссылки
+const LinkNotification = ({ isVisible }: { isVisible: boolean }) => {
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          className="link-notification"
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: -20 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}>
+          <div className="link-notification-content">
+            <svg
+              className="link-notification-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <span>Ссылка скопирована!</span>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
-const wikiData: WikiSection[] = [
-  {
-    id: 'install',
-    title: 'Установка',
-    content: `<h2>Установка Pesherkino VPN</h2>
-      <p>Выберите вашу платформу и следуйте инструкции:</p>`,
-    subsections: [
-      {
-        id: 'install-windows',
-        title: 'Windows | Hiddify',
-        content: `<h3>Установка на Windows через Hiddify</h3>
-        <ol>
-          <li>Скачайте <a href="https://hiddify.com/ru/download" target="_blank">Hiddify</a> с официального сайта.</li>
-          <li>Импортируйте ссылку из Telegram-бота.</li>
-          <li>Следуйте инструкции по подключению.</li>
-        </ol>`,
-      },
-      {
-        id: 'install-macos',
-        title: 'MacOS | Hiddify',
-        content: `<h3>Установка на MacOS через Hiddify</h3>
-        <ol>
-          <li>Скачайте Hiddify для MacOS.</li>
-          <li>Импортируйте ссылку из Telegram-бота.</li>
-          <li>Следуйте инструкции по подключению.</li>
-        </ol>`,
-      },
-      {
-        id: 'install-iphone',
-        title: 'Iphone | Streisand',
-        content: `<h3>Установка на iPhone через Streisand</h3>
-        <ol>
-          <li>Скачайте Streisand из App Store.</li>
-          <li>Импортируйте ссылку из Telegram-бота.</li>
-          <li>Следуйте инструкции по подключению.</li>
-        </ol>`,
-      },
-      {
-        id: 'install-android',
-        title: 'Android Hiddify',
-        content: `<h3>Установка на Android через Hiddify</h3>
-        <ol>
-          <li>Скачайте Hiddify из Google Play.</li>
-          <li>Импортируйте ссылку из Telegram-бота.</li>
-          <li>Следуйте инструкции по подключению.</li>
-        </ol>`,
-      },
-    ],
-  },
-  {
-    id: 'advanced-windows',
-    title: 'Более сложная установка на Windows',
-    content: `<h2>Более сложная установка на Windows</h2>
-      <p>Инструкции для продвинутых пользователей и особых сценариев:</p>`,
-    subsections: [
-      {
-        id: 'advanced-history',
-        title: 'Предыстория',
-        content: `<h3>Предыстория</h3>
-        <p>Почему стоит выбрать альтернативные клиенты и когда это нужно.</p>`,
-      },
-      {
-        id: 'nekoray-windows',
-        title: 'Nekoray - Windows',
-        content: `<h3>Nekoray - Windows</h3>
-        <p>Подробная инструкция по установке и настройке Nekoray для Windows.</p>`,
-      },
-      {
-        id: 'nekoray-split',
-        title: 'Nekoray - Windows | Раздельный трафик',
-        content: `<h3>Nekoray - Windows | Раздельный трафик</h3>
-        <p>Как настроить раздельный трафик для разных приложений.</p>`,
-      },
-      {
-        id: 'nekoray-browser-discord',
-        title: 'Nekoray - Windows | только браузер и discord',
-        content: `<h3>Nekoray - Windows | только браузер и discord</h3>
-        <p>Настройка VPN только для браузера и Discord.</p>`,
-      },
-    ],
-  },
-  {
-    id: 'locations',
-    title: 'Локации серверов',
-    content: `
-      <h2>Наши серверы</h2>
-      <p>Pesherkino VPN имеет серверы в различных странах для обеспечения оптимальной скорости и доступа к различным ресурсам.</p>
-      <div class="locations-grid">
-        <div class="location-card-wiki">
-          <img src="/sweden.svg" alt="Швеция" class="location-flag-wiki" />
-          <h3>Стокгольм, Швеция</h3>
-          <p>Оптимально для доступа к европейским сервисам: Spotify, IKEA, Klarna</p>
-          <div class="ping-info">Средний пинг: 45-65ms</div>
-        </div>
-        <div class="location-card-wiki">
-          <img src="/germany.svg" alt="Германия" class="location-flag-wiki" />
-          <h3>Франкфурт, Германия</h3>
-          <p>Идеально для Discord и немецких сервисов: Deutsche Bank, Commerzbank</p>
-          <div class="ping-info">Средний пинг: 35-55ms</div>
-        </div>
-        <div class="location-card-wiki">
-          <img src="/netherlands.svg" alt="Нидерланды" class="location-flag-wiki" />
-          <h3>Амстердам, Нидерланды</h3>
-          <p>Отлично для голландских сервисов: Philips, KLM, TomTom</p>
-          <div class="ping-info">Средний пинг: 40-60ms</div>
-        </div>
-        <div class="location-card-wiki">
-          <img src="/russia.svg" alt="Россия" class="location-flag-wiki" />
-          <h3>Санкт-Петербург, Россия</h3>
-          <p>Для доступа к российским сервисам: HeadHunter, Rutube, Циан</p>
-          <div class="ping-info">Средний пинг: 15-35ms</div>
-        </div>
+// Компонент кнопки копирования ссылки
+const CopyLinkButton = ({ onClick, title }: { onClick: () => void; title: string }) => {
+  return (
+    <button className="copy-link-button" onClick={onClick} title={title}>
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+    </button>
+  );
+};
+
+// Компонент индикатора прогресса чтения
+const ReadingProgress = ({
+  currentSubsection,
+  totalSubsections,
+  subsections,
+}: {
+  currentSubsection: string;
+  totalSubsections: number;
+  subsections: WikiSection[];
+}) => {
+  if (totalSubsections === 0) return null;
+
+  const currentIndex = subsections.findIndex((sub: WikiSection) => sub.id === currentSubsection);
+  const progress = currentIndex >= 0 ? ((currentIndex + 1) / totalSubsections) * 100 : 0;
+
+  return (
+    <div className="reading-progress">
+      <div className="reading-progress-bar">
+        <div className="reading-progress-fill" style={{ width: `${progress}%` }} />
       </div>
-    `,
-  },
-  {
-    id: 'faq-extended',
-    title: 'Часто задаваемые вопросы',
-    content: `
-      <h2>FAQ</h2>
-      <div class="faq-item">
-        <h3>🔒 Безопасен ли Pesherkino VPN?</h3>
-        <p>Да, наш сервис полностью безопасен. Мы используем современные протоколы шифрования и не ведем логи активности пользователей. Весь код открыт и доступен для проверки.</p>
+      <div className="reading-progress-text">
+        {currentIndex >= 0 ? currentIndex + 1 : 0} из {totalSubsections}
       </div>
-      <div class="faq-item">
-        <h3>⚡ Какова скорость соединения?</h3>
-        <p>Скорость зависит от выбранного сервера и качества вашего интернет-соединения. В среднем потери скорости составляют 5-15%.</p>
+    </div>
+  );
+};
+
+const CodeBlock = ({ children }: { children: string }) => {
+  const [copied, setCopied] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(children);
+      setCopied(true);
+      setShowNotification(true);
+
+      // Скрываем уведомление через 2 секунды
+      setTimeout(() => {
+        setShowNotification(false);
+        setTimeout(() => setCopied(false), 300); // Скрываем состояние кнопки после анимации
+      }, 2000);
+    } catch (err) {
+      console.error('Ошибка копирования:', err);
+    }
+  };
+
+  return (
+    <div className="code-block">
+      <CopyNotification isVisible={showNotification} />
+      <button className={`code-copy-button ${copied ? 'copied' : ''}`} onClick={handleCopy}>
+        {copied ? (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+            Скопировано
+          </>
+        ) : (
+          <>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Копировать
+          </>
+        )}
+      </button>
+      <pre>
+        <code>{children}</code>
+      </pre>
+    </div>
+  );
+};
+
+// Функция для рендеринга HTML с поддержкой блоков кода
+const renderContentWithCodeBlocks = (htmlContent: string) => {
+  // Находим все блоки кода и заменяем их на компоненты
+  const codeBlockRegex =
+    /<div class="code-block">\s*<pre><code>([\s\S]*?)<\/code><\/pre>\s*<\/div>/g;
+
+  // Проверяем, есть ли блоки кода в контенте
+  const hasCodeBlocks = codeBlockRegex.test(htmlContent);
+  console.log('Has code blocks:', hasCodeBlocks);
+
+  if (!hasCodeBlocks) {
+    // Если блоков кода нет, просто возвращаем обычный HTML
+    return <div className="content-html" dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+  }
+
+  // Сбрасываем регулярное выражение
+  codeBlockRegex.lastIndex = 0;
+
+  const parts = htmlContent.split(codeBlockRegex);
+  const result = [];
+
+  console.log('Parts length:', parts.length);
+
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 2 === 0) {
+      // Обычный HTML контент
+      if (parts[i].trim()) {
+        result.push(
+          <div
+            key={`html-${i}`}
+            className="content-html"
+            dangerouslySetInnerHTML={{ __html: parts[i] }}
+          />,
+        );
+      }
+    } else {
+      // Блок кода
+      console.log('Code block found:', parts[i].substring(0, 100) + '...');
+      result.push(<CodeBlock key={`code-${i}`}>{parts[i]}</CodeBlock>);
+    }
+  }
+
+  return result;
+};
+
+// Компонент навигации внизу страницы
+const BottomNavigation = ({
+  currentSection,
+  currentSubsection,
+  onNavigate,
+}: {
+  currentSection: WikiSection;
+  currentSubsection: WikiSection | null;
+  onNavigate: (sectionId: string, subsectionId?: string) => void;
+}) => {
+  // Получаем все разделы и подразделы в плоском списке для навигации
+  const getAllItems = () => {
+    const items: Array<{
+      type: 'section' | 'subsection';
+      section: WikiSection;
+      subsection?: WikiSection;
+    }> = [];
+
+    wikiData.forEach((section) => {
+      // Добавляем раздел
+      items.push({ type: 'section', section });
+
+      // Добавляем подразделы раздела
+      if (section.subsections) {
+        section.subsections.forEach((subsection) => {
+          items.push({ type: 'subsection', section, subsection });
+        });
+      }
+    });
+
+    return items;
+  };
+
+  const allItems = getAllItems();
+  const currentIndex = allItems.findIndex((item) => {
+    if (currentSubsection) {
+      return (
+        item.type === 'subsection' &&
+        item.section.id === currentSection.id &&
+        item.subsection?.id === currentSubsection.id
+      );
+    } else {
+      return item.type === 'section' && item.section.id === currentSection.id;
+    }
+  });
+
+  const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
+  const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
+
+  const handlePrevClick = () => {
+    if (prevItem) {
+      if (prevItem.type === 'subsection' && prevItem.subsection) {
+        onNavigate(prevItem.section.id, prevItem.subsection.id);
+      } else {
+        onNavigate(prevItem.section.id);
+      }
+    }
+  };
+
+  const handleNextClick = () => {
+    if (nextItem) {
+      if (nextItem.type === 'subsection' && nextItem.subsection) {
+        onNavigate(nextItem.section.id, nextItem.subsection.id);
+      } else {
+        onNavigate(nextItem.section.id);
+      }
+    }
+  };
+
+  if (!prevItem && !nextItem) return null;
+
+  return (
+    <div className="bottom-navigation">
+      <div className="bottom-navigation-container">
+        {prevItem && (
+          <motion.button
+            className="nav-button nav-button-prev"
+            onClick={handlePrevClick}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}>
+            <div className="nav-button-content">
+              <div className="nav-button-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="15,18 9,12 15,6"></polyline>
+                </svg>
+              </div>
+              <div className="nav-button-text">
+                <div className="nav-button-label">Назад</div>
+                <div className="nav-button-title">
+                  {prevItem.type === 'subsection' && prevItem.subsection
+                    ? `${prevItem.section.title} > ${prevItem.subsection.title}`
+                    : prevItem.section.title}
+                </div>
+              </div>
+            </div>
+          </motion.button>
+        )}
+
+        {nextItem && (
+          <motion.button
+            className="nav-button nav-button-next"
+            onClick={handleNextClick}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}>
+            <div className="nav-button-content">
+              <div className="nav-button-text">
+                <div className="nav-button-label">Вперед</div>
+                <div className="nav-button-title">
+                  {nextItem.type === 'subsection' && nextItem.subsection
+                    ? `${nextItem.section.title} > ${nextItem.subsection.title}`
+                    : nextItem.section.title}
+                </div>
+              </div>
+              <div className="nav-button-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="9,18 15,12 9,6"></polyline>
+                </svg>
+              </div>
+            </div>
+          </motion.button>
+        )}
       </div>
-      <div class="faq-item">
-        <h3>💬 Почему Discord Fix бесплатный?</h3>
-        <p>Мы считаем, что доступ к Discord должен быть свободным. Discord Fix — это наш вклад в сообщество геймеров и разработчиков.</p>
-      </div>
-      <div class="faq-item">
-        <h3>🛡️ Что означает "Open Source"?</h3>
-        <p>Весь исходный код нашего приложения открыт и доступен на GitHub. Это означает максимальную прозрачность и возможность независимой проверки безопасности.</p>
-      </div>
-      <div class="faq-item">
-        <h3>🤝 Как работает реферальная система?</h3>
-        <p>За каждого приглашенного пользователя вы получаете 10% от суммы его первого платежа в качестве бонуса на ваш счет.</p>
-      </div>
-      <div class="faq-item">
-        <h3>📱 Поддерживаются ли мобильные устройства?</h3>
-        <p>В настоящее время мы поддерживаем Windows и расширения для браузеров. Мобильные приложения находятся в разработке.</p>
-      </div>
-    `,
-  },
-  {
-    id: 'troubleshooting',
-    title: 'Проблемы и решения',
-    content: `
-      <h2>Проблемы и решения</h2>
-      <ul>
-        <li><b>Общие советы:</b> Что делать, если не удаётся подключиться или скорость низкая.</li>
-        <li><b>Discord не работает:</b> Проверьте, что вы используете Discord Fix и отключили другие VPN.</li>
-        <li><b>Проблемы с оплатой:</b> Попробуйте другой способ или обратитесь в поддержку.</li>
-      </ul>
-    `,
-    subsections: [
-      {
-        id: 'troubleshooting-tips',
-        title: 'Общие советы',
-        content: `
-          <h3>Что делать, если возникли проблемы?</h3>
-          <ul>
-            <li>Перезапустите приложение и устройство.</li>
-            <li>Проверьте интернет-соединение.</li>
-            <li>Попробуйте другой сервер или локацию.</li>
-            <li>Отключите сторонние VPN и прокси.</li>
-            <li>Обратитесь в поддержку через Telegram-бота.</li>
-          </ul>
-        `,
-      },
-    ],
-  },
-  {
-    id: 'useful',
-    title: 'Полезное',
-    content: `
-      <h2>Полезные материалы</h2>
-      <ul>
-        <li><b>Выбор клиента:</b> Какой VPN-клиент выбрать для вашей платформы.</li>
-        <li><b>Сравнение тарифов:</b> Какой тариф подойдёт именно вам.</li>
-        <li><b>Ссылки на официальные ресурсы и чаты.</b></li>
-      </ul>
-    `,
-    subsections: [
-      {
-        id: 'choose-client',
-        title: 'Выбор клиента',
-        content: `
-          <h3>Как выбрать VPN-клиент?</h3>
-          <ul>
-            <li>Для Windows и Android рекомендуем Hiddify.</li>
-            <li>Для MacOS — Hiddify или Streisand.</li>
-            <li>Для iOS — Streisand.</li>
-            <li>Для Linux — любой клиент с поддержкой VLESS/VMess.</li>
-          </ul>
-        `,
-      },
-    ],
-  },
-];
+    </div>
+  );
+};
 
 function WikiPage() {
-  const [selectedSection, setSelectedSection] = useState<string>('getting-started');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -232,10 +340,85 @@ function WikiPage() {
   const [selectedResultIndex, setSelectedResultIndex] = useState<number>(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSearchModal, setIsSearchModal] = useState(false);
   const [isMobileSidebar, setIsMobileSidebar] = useState(false);
+  const [showLinkNotification, setShowLinkNotification] = useState(false);
 
-  const currentSection = wikiData.find((section) => section.id === selectedSection) || wikiData[0];
+  // 1. Парсим параметры из URL
+  const urlParams = new URLSearchParams(location.search);
+  const sectionParam = urlParams.get('section');
+  const subsectionParam = urlParams.get('subsection');
+
+  // 2. Вычисляем текущий раздел и подраздел только из URL
+  const currentSection = wikiData.find((section) => section.id === sectionParam) || wikiData[0];
+  const subsections = currentSection.subsections || [];
+  const activeSubsection =
+    subsections.length > 0
+      ? subsections.find((sub) => sub.id === subsectionParam) || subsections[0]
+      : null;
+  const selectedSection = currentSection.id;
+  const activeSubsectionId = activeSubsection ? activeSubsection.id : null;
+
+  // 3. currentVisibleSubsection — для прогресс-бара и подсветки (по умолчанию = activeSubsectionId)
+  const [currentVisibleSubsection, setCurrentVisibleSubsection] = useState<string>(
+    activeSubsectionId || '',
+  );
+
+  useEffect(() => {
+    setCurrentVisibleSubsection(activeSubsectionId || '');
+  }, [activeSubsectionId, selectedSection]);
+
+  // 4. Observer только если есть подразделы
+  useEffect(() => {
+    if (!subsections.length) return;
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0,
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const subsectionId = entry.target.id;
+          setCurrentVisibleSubsection(subsectionId);
+          // Обновляем только если есть подразделы
+          const params = new URLSearchParams();
+          params.set('section', selectedSection);
+          params.set('subsection', subsectionId);
+          const newURL = `${location.pathname}?${params.toString()}`;
+          if (location.search !== `?${params.toString()}`) {
+            navigate(newURL, { replace: true });
+          }
+        }
+      });
+    }, observerOptions);
+    subsections.forEach((subsection) => {
+      const element = document.getElementById(subsection.id);
+      if (element) observer.observe(element);
+    });
+    return () => observer.disconnect();
+  }, [selectedSection, subsections, navigate, location.pathname, location.search]);
+
+  // 5. handleSectionClick/handleSubsectionClick — только navigate
+  const handleSectionClick = (sectionId: string) => {
+    const params = new URLSearchParams();
+    params.set('section', sectionId);
+    const newURL = `${location.pathname}?${params.toString()}`;
+    navigate(newURL, { replace: true });
+    if (window.innerWidth < 768) setIsSidebarOpen(false);
+  };
+  const handleSubsectionClick = (sectionId: string, subsectionId: string) => {
+    const params = new URLSearchParams();
+    params.set('section', sectionId);
+    params.set('subsection', subsectionId);
+    const newURL = `${location.pathname}?${params.toString()}`;
+    navigate(newURL, { replace: true });
+    setTimeout(() => {
+      const element = document.getElementById(subsectionId);
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
 
   // Функция поиска в стиле GitBook
   const performSearch = (query: string): SearchResult[] => {
@@ -397,7 +580,7 @@ function WikiPage() {
 
   // Обработка клика по результату поиска
   const handleResultClick = (result: SearchResult) => {
-    setSelectedSection(result.sectionId);
+    setCurrentVisibleSubsection(result.subsectionId || '');
     setSearchQuery('');
     setShowSearchResults(false);
 
@@ -435,23 +618,6 @@ function WikiPage() {
         part
       ),
     );
-  };
-
-  const handleSectionClick = (sectionId: string) => {
-    setSelectedSection(sectionId);
-    if (window.innerWidth < 768) {
-      setIsSidebarOpen(false);
-    }
-  };
-
-  const handleSubsectionClick = (sectionId: string, subsectionId: string) => {
-    setSelectedSection(sectionId);
-    setTimeout(() => {
-      const element = document.getElementById(subsectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
   };
 
   // Открытие модального поиска
@@ -541,6 +707,9 @@ function WikiPage() {
 
   return (
     <div className="wiki-container">
+      {/* Уведомления */}
+      <LinkNotification isVisible={showLinkNotification} />
+
       {/* Header */}
       <motion.header
         className="wiki-header"
@@ -821,7 +990,7 @@ function WikiPage() {
                         <button
                           className={`nav-link ${selectedSection === section.id ? 'active' : ''}`}
                           onClick={() => {
-                            setSelectedSection(section.id);
+                            handleSectionClick(section.id);
                             setIsMobileSidebar(false);
                           }}>
                           <span className="nav-link-text">{section.title}</span>
@@ -830,18 +999,31 @@ function WikiPage() {
                           <ul className="subnav-list">
                             {section.subsections.map((subsection) => (
                               <li key={subsection.id} className="subnav-item">
-                                <button
-                                  className="subnav-link"
-                                  onClick={() => {
-                                    setSelectedSection(section.id);
-                                    setTimeout(() => {
-                                      const el = document.getElementById(subsection.id);
-                                      if (el) el.scrollIntoView({ behavior: 'smooth' });
-                                    }, 100);
-                                    setIsMobileSidebar(false);
-                                  }}>
-                                  {subsection.title}
-                                </button>
+                                <div className="subnav-link-container">
+                                  <button
+                                    className={`subnav-link ${
+                                      currentVisibleSubsection === subsection.id ? 'active' : ''
+                                    }`}
+                                    onClick={() =>
+                                      handleSubsectionClick(section.id, subsection.id)
+                                    }>
+                                    {subsection.title}
+                                  </button>
+                                  <CopyLinkButton
+                                    onClick={() => {
+                                      const params = new URLSearchParams();
+                                      params.set('section', section.id);
+                                      params.set('subsection', subsection.id);
+                                      const subsectionURL = `${window.location.origin}${
+                                        location.pathname
+                                      }?${params.toString()}`;
+                                      navigator.clipboard.writeText(subsectionURL);
+                                      setShowLinkNotification(true);
+                                      setTimeout(() => setShowLinkNotification(false), 2000);
+                                    }}
+                                    title="Копировать ссылку на подраздел"
+                                  />
+                                </div>
                               </li>
                             ))}
                           </ul>
@@ -872,20 +1054,57 @@ function WikiPage() {
                   <ul className="nav-list">
                     {wikiData.map((section) => (
                       <li key={section.id} className="nav-item">
-                        <button
-                          className={`nav-link ${selectedSection === section.id ? 'active' : ''}`}
-                          onClick={() => handleSectionClick(section.id)}>
-                          <span className="nav-link-text">{section.title}</span>
-                        </button>
+                        <div className="nav-link-container">
+                          <button
+                            className={`nav-link ${selectedSection === section.id ? 'active' : ''}`}
+                            onClick={() => handleSectionClick(section.id)}>
+                            <span className="nav-link-text">{section.title}</span>
+                          </button>
+                          <CopyLinkButton
+                            onClick={() => {
+                              const params = new URLSearchParams();
+                              params.set('section', section.id);
+                              const sectionURL = `${window.location.origin}${
+                                location.pathname
+                              }?${params.toString()}`;
+                              navigator.clipboard.writeText(sectionURL);
+                              setShowLinkNotification(true);
+                              setTimeout(() => setShowLinkNotification(false), 2000);
+                            }}
+                            title="Копировать ссылку на раздел"
+                          />
+                        </div>
                         {section.subsections && (
                           <ul className="subnav-list">
                             {section.subsections.map((subsection) => (
                               <li key={subsection.id} className="subnav-item">
-                                <button
-                                  className="subnav-link"
-                                  onClick={() => handleSubsectionClick(section.id, subsection.id)}>
-                                  {subsection.title}
-                                </button>
+                                <div className="subnav-link-container">
+                                  <button
+                                    className={`subnav-link ${
+                                      subsections.length > 0 && activeSubsectionId === subsection.id
+                                        ? 'active'
+                                        : ''
+                                    }`}
+                                    onClick={() =>
+                                      handleSubsectionClick(section.id, subsection.id)
+                                    }>
+                                    {subsection.title}
+                                  </button>
+                                  <CopyLinkButton
+                                    onClick={() => {
+                                      const params = new URLSearchParams();
+                                      params.set('section', section.id);
+                                      params.set('subsection', subsection.id);
+                                      const subsectionURL = `${window.location.origin}${
+                                        location.pathname
+                                      }?${params.toString()}`;
+                                      navigator.clipboard.writeText(subsectionURL);
+                                      setShowLinkNotification(true);
+                                      setTimeout(() => setShowLinkNotification(false), 2000);
+                                    }}
+                                    title="Копировать ссылку на подраздел"
+                                  />
+                                </div>
                               </li>
                             ))}
                           </ul>
@@ -901,29 +1120,43 @@ function WikiPage() {
 
         {/* Main Content */}
         <main className="wiki-main">
+          {/* Индикатор прогресса чтения */}
+          {subsections.length > 0 && (
+            <ReadingProgress
+              currentSubsection={activeSubsectionId || ''}
+              totalSubsections={subsections.length}
+              subsections={subsections}
+            />
+          )}
+
           <motion.div
             className="wiki-content"
             key={selectedSection}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}>
-            <div
-              className="content-html"
-              dangerouslySetInnerHTML={{ __html: currentSection.content }}
-            />
+            {renderContentWithCodeBlocks(currentSection.content)}
 
-            {currentSection.subsections && (
+            {activeSubsection && (
               <div className="subsections">
-                {currentSection.subsections.map((subsection) => (
-                  <div key={subsection.id} id={subsection.id} className="subsection">
-                    <div
-                      className="content-html"
-                      dangerouslySetInnerHTML={{ __html: subsection.content }}
-                    />
-                  </div>
-                ))}
+                <div key={activeSubsection.id} id={activeSubsection.id} className="subsection">
+                  {renderContentWithCodeBlocks(activeSubsection.content)}
+                </div>
               </div>
             )}
+
+            {/* Навигация внизу страницы */}
+            <BottomNavigation
+              currentSection={currentSection}
+              currentSubsection={activeSubsection}
+              onNavigate={(sectionId, subsectionId) => {
+                if (subsectionId) {
+                  handleSubsectionClick(sectionId, subsectionId);
+                } else {
+                  handleSectionClick(sectionId);
+                }
+              }}
+            />
           </motion.div>
         </main>
       </div>
