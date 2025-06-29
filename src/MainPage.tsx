@@ -1,11 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 function MainPage() {
   const [showBrowsers, setShowBrowsers] = useState(false);
   const [showDiscordInstructions, setShowDiscordInstructions] = useState(false);
+  const [showAppGuide, setShowAppGuide] = useState(false);
+  const appGuideRef = useRef<HTMLDivElement>(null);
   const [locations, setLocations] = useState([
     {
       name: 'Стокгольм',
@@ -103,6 +106,15 @@ function MainPage() {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (!showAppGuide) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowAppGuide(false);
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [showAppGuide]);
 
   const browsers = [
     {
@@ -229,12 +241,13 @@ function MainPage() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               title="Доступно для Windows 10 и 11"
-              onClick={() =>
+              onClick={() => {
+                setShowAppGuide(true);
                 window.open(
                   'https://github.com/Muhendalf-ru/pesherkino-vpn/releases/download/v2.0.38/pesherkino-vpn-2.0.38-setup.exe',
                   '_blank',
-                )
-              }>
+                );
+              }}>
               <svg
                 className="windows-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -721,6 +734,72 @@ function MainPage() {
           </motion.div>
         </motion.div>
       </div>
+      {/* Portal для модального окна с гайдом */}
+      {typeof window !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {showAppGuide && (
+              <>
+                <motion.div
+                  className="app-guide-overlay"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setShowAppGuide(false)}
+                  style={{ zIndex: 99999 }}
+                />
+                <motion.div
+                  className="app-guide-modal"
+                  ref={appGuideRef}
+                  initial={{ y: -80, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -80, opacity: 0 }}
+                  transition={{ duration: 0.3, type: 'spring', stiffness: 120 }}
+                  style={{ zIndex: 100000 }}>
+                  <button
+                    className="app-guide-close"
+                    onClick={() => setShowAppGuide(false)}
+                    title="Закрыть">
+                    ×
+                  </button>
+                  <div className="app-guide-content">
+                    <h2>Установка Pesherkino VPN</h2>
+                    <ol className="app-guide-steps">
+                      <li>
+                        <span className="app-guide-step-num">1</span> Установите и откройте
+                        приложение
+                      </li>
+                      <li>
+                        <span className="app-guide-step-num">2</span> Перейдите во вкладку "Дискорд"
+                      </li>
+                      <li>
+                        <span className="app-guide-step-num">3</span> Выберите Discord Free
+                      </li>
+                      <li>
+                        <span className="app-guide-step-num">4</span> Нажмите Запустить
+                      </li>
+                    </ol>
+                    <div className="app-guide-warning">
+                      <b>⚠️ Любые проблемы, вопросы или сложности?</b>
+                      <br />
+                      Напишите в{' '}
+                      <a
+                        href="https://t.me/your_support"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="app-guide-link">
+                        техподдержку
+                      </a>{' '}
+                      — мы поможем быстро и бесплатно!
+                    </div>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
     </div>
   );
 }
