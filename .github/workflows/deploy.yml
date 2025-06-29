@@ -28,6 +28,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: SENTRY_AUTH_TOKEN
           script: |
             cd /home/root/app
             echo "🛑 Останавливаем контейнеры..."
@@ -35,4 +36,4 @@ jobs:
             echo "🧹 Очищаем неиспользуемые образы, контейнеры и тома..."
             docker system prune -af --volumes
             echo "🚀 Собираем и запускаем..."
-            docker-compose up --build -d
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} docker-compose up --build -d

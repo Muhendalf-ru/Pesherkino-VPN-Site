@@ -2,8 +2,16 @@
 FROM node:20 AS builder
 
 WORKDIR /app
+
+COPY package.json yarn.lock ./
+RUN yarn install
+
 COPY . .
-RUN yarn install && yarn build
+
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
+RUN yarn build
 
 # Stage 2: Serve static files with nginx
 FROM nginx:alpine
