@@ -2,8 +2,11 @@ version: '3.8'
 
 services:
   react-app:
-    build: .
+    build:
+      context: .
+      args:
+        SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
     container_name: react-app
     restart: always
     ports:
-      - "127.0.0.1:8080:80"
+      - '127.0.0.1:8080:80'
