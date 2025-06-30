@@ -28,7 +28,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: SENTRY_AUTH_TOKEN
+          envs: SENTRY_AUTH_TOKEN,VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY
           script: |
             cd /home/root/app
             echo "🛑 Останавливаем контейнеры..."
@@ -37,5 +37,7 @@ jobs:
             docker system prune -af --volumes
             echo "🚀 Собираем и запускаем..."
             export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            export VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
+            export VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
             docker-compose build
             docker-compose up -d

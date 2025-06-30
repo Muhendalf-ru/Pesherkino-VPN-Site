@@ -7,6 +7,7 @@ const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
 import CosmicSpinner from './components/ui/CosmicSpinner';
 import NotFound from './pages/NotFound';
 import MainPage from './pages/MainPage';
+const BugTrackerPage = lazy(() => import('./pages/BugTrackerPage'));
 
 function App() {
   return (
@@ -34,6 +35,14 @@ function App() {
           element={
             <Suspense fallback={<CosmicSpinner />}>
               <AchievementsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/bug-tracker"
+          element={
+            <Suspense fallback={<CosmicSpinner />}>
+              <BugTrackerPage />
             </Suspense>
           }
         />

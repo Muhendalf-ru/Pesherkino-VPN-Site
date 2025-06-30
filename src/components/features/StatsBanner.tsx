@@ -169,6 +169,60 @@ const StatsBanner: React.FC = () => {
           onClick={() => navigate('/wiki')}>
           📚 Wiki
         </motion.button>
+        <motion.button
+          className="download-button"
+          style={{
+            fontSize: 15,
+            padding: '14px 24px',
+            fontWeight: 600,
+            background: 'linear-gradient(135deg, rgba(168,139,250,0.22), rgba(139,92,246,0.18))',
+            color: '#e2e8f0',
+            border: '1.5px solid rgba(168,139,250,0.4)',
+            borderRadius: 12,
+            boxShadow: '0 4px 16px rgba(168,139,250,0.18)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            transition: 'all 0.3s ease',
+            minWidth: 140,
+          }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: '0 8px 24px rgba(168,139,250,0.28)',
+            background: 'linear-gradient(135deg, rgba(168,139,250,0.32), rgba(139,92,246,0.25))',
+            color: '#fff',
+            borderColor: '#a78bfa',
+          }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate('/bug-tracker')}>
+          🐞 Баг Трекер
+        </motion.button>
+        <motion.button
+          className="download-button"
+          style={{
+            fontSize: 15,
+            padding: '14px 24px',
+            fontWeight: 600,
+            background: 'linear-gradient(135deg, rgba(255,215,64,0.18), rgba(255,215,64,0.12))',
+            color: '#e2e8f0',
+            border: '1.5px solid rgba(255,215,64,0.32)',
+            borderRadius: 12,
+            boxShadow: '0 4px 16px rgba(255,215,64,0.13)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            transition: 'all 0.3s ease',
+            minWidth: 140,
+          }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: '0 8px 24px rgba(255,215,64,0.22)',
+            background: 'linear-gradient(135deg, rgba(255,215,64,0.28), rgba(255,215,64,0.18))',
+            color: '#fff',
+            borderColor: '#ffd740',
+          }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate('/achievements')}>
+          🏆 Достижения
+        </motion.button>
       </div>
     </motion.div>
   );
