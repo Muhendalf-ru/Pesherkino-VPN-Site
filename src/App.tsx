@@ -1,17 +1,33 @@
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainPage from './MainPage';
-import NotFound from './NotFound';
-import Status from './Status';
-import './App.css';
-import WikiPage from './WikiPage';
+const Status = lazy(() => import('./pages/StatusPage'));
+import './styles/App.css';
+const WikiPage = lazy(() => import('./pages/WikiPage'));
+import CosmicSpinner from './components/ui/CosmicSpinner';
+import NotFound from './pages/NotFound';
+import MainPage from './pages/MainPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/wiki" element={<WikiPage />} />
-        <Route path="/status" element={<Status />} />
+        <Route
+          path="/wiki/*"
+          element={
+            <Suspense fallback={<CosmicSpinner />}>
+              <WikiPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/status"
+          element={
+            <Suspense fallback={<CosmicSpinner />}>
+              <Status />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

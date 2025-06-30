@@ -1,0 +1,42 @@
+.title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 2rem;
+  cursor: pointer;
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% 200%;
+  animation: gradient 5s ease infinite;
+}
+
+.notfound-title {
+  font-size: 80px;
+  font-weight: 900;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.notfound-subtitle {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.notfound-desc {
+  font-size: 20px;
+  color: #b0b8d0;
+  margin-bottom: 32px;
+  text-align: center;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}

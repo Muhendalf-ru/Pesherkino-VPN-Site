@@ -1,0 +1,207 @@
+/* Cosmic Spinner */
+.cosmic-spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  gap: 2rem;
+  position: relative;
+}
+
+.cosmic-spinner-container::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(2px 2px at 160px 30px, #fff, transparent);
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: sparkle 4s linear infinite;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.cosmic-spinner-container::after {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background-image: radial-gradient(1px 1px at 25px 25px, rgba(59, 130, 246, 0.8), transparent),
+    radial-gradient(1px 1px at 50px 60px, rgba(139, 92, 246, 0.6), transparent),
+    radial-gradient(1px 1px at 75px 35px, rgba(59, 130, 246, 0.7), transparent),
+    radial-gradient(1px 1px at 100px 70px, rgba(139, 92, 246, 0.5), transparent);
+  background-repeat: repeat;
+  background-size: 150px 150px;
+  animation: sparkle 6s linear infinite reverse;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.cosmic-spinner {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-orbit {
+  position: absolute;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 50%;
+  animation: orbit-rotate 3s linear infinite;
+}
+
+.spinner-orbit:nth-child(1) {
+  width: 80px;
+  height: 80px;
+  animation-duration: 3s;
+}
+
+.spinner-orbit:nth-child(2) {
+  width: 100px;
+  height: 100px;
+  animation-duration: 4s;
+  animation-direction: reverse;
+}
+
+.spinner-orbit:nth-child(3) {
+  width: 120px;
+  height: 120px;
+  animation-duration: 5s;
+}
+
+.spinner-planet {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+  animation: planet-pulse 2s ease-in-out infinite;
+}
+
+.spinner-orbit:nth-child(1) .spinner-planet {
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 0s;
+}
+
+.spinner-orbit:nth-child(2) .spinner-planet {
+  top: 50%;
+  right: -4px;
+  transform: translateY(-50%);
+  animation-delay: 0.5s;
+}
+
+.spinner-orbit:nth-child(3) .spinner-planet {
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 1s;
+}
+
+.spinner-center {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner-star {
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  animation: star-twinkle 1.5s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+}
+
+.spinner-star::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  animation: star-glow 2s ease-in-out infinite;
+}
+
+.spinner-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.text-line {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  opacity: 0;
+  animation: text-fade-in 0.8s ease-out forwards;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.text-line:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.text-line:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.text-line:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.spinner-dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  animation: dot-bounce 1.4s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
