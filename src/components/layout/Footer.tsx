@@ -14,6 +14,7 @@ const Footer: React.FC = () => {
   const footerLinks: FooterLink[] = [
     { name: 'Github', icon: '⚡', url: 'https://github.com/Muhendalf-ru/pesherkino-vpn' },
     { name: 'Wiki', icon: '📚', url: '/wiki' },
+    { name: 'Достижения', icon: '🏆', url: '/achievements' },
     { name: 'Купить VPN', icon: '💎', url: 'https://t.me/pesherkino_bot?start=ref_855347094' },
     { name: 'Поддержка', icon: '🛟', url: 'https://t.me/pesherkino' },
   ];
