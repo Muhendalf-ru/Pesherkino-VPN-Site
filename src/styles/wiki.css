@@ -62,6 +62,8 @@
   position: sticky;
   top: 80px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #a78bfa #181c2a;
 }
 
 .sidebar-content {
@@ -803,4 +805,42 @@
 
 .subnav-link.active {
   transition: all 0.2s ease;
+}
+
+/* --- Кастомный космический скроллбар для wiki-sidebar --- */
+.wiki-sidebar,
+.wiki-sidebar .sidebar-content,
+.wiki-sidebar .nav-list,
+.wiki-sidebar .subnav-list {
+  scrollbar-width: thin;
+  scrollbar-color: #a78bfa #181c2a;
+}
+.wiki-sidebar::-webkit-scrollbar,
+.wiki-sidebar .sidebar-content::-webkit-scrollbar,
+.wiki-sidebar .nav-list::-webkit-scrollbar,
+.wiki-sidebar .subnav-list::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+.wiki-sidebar::-webkit-scrollbar-thumb,
+.wiki-sidebar .sidebar-content::-webkit-scrollbar-thumb,
+.wiki-sidebar .nav-list::-webkit-scrollbar-thumb,
+.wiki-sidebar .subnav-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #7f9cf5 0%, #a78bfa 60%, #fbc2eb 100%);
+  border-radius: 8px;
+  box-shadow: 0 0 8px 2px #a78bfa55;
+  transition: background 0.3s;
+}
+.wiki-sidebar::-webkit-scrollbar-thumb:hover,
+.wiki-sidebar .sidebar-content::-webkit-scrollbar-thumb:hover,
+.wiki-sidebar .nav-list::-webkit-scrollbar-thumb:hover,
+.wiki-sidebar .subnav-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #fbc2eb 0%, #a78bfa 60%, #7f9cf5 100%);
+  box-shadow: 0 0 16px 4px #fbc2eb99;
+}
+.wiki-sidebar::-webkit-scrollbar-track,
+.wiki-sidebar .sidebar-content::-webkit-scrollbar-track,
+.wiki-sidebar .nav-list::-webkit-scrollbar-track,
+.wiki-sidebar .subnav-list::-webkit-scrollbar-track {
+  background: transparent;
 }
