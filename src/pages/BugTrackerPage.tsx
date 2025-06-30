@@ -613,27 +613,28 @@ function BugTrackerPage() {
                       </span>
                     )}
                   </div>
-                  {user && (
-                    <div className="bug-item-actions">
-                      <button
-                        className={`bug-fixed-toggle${bug.fixed ? ' active' : ''}`}
-                        type="button"
-                        onClick={() => handleToggleFixed(bug)}
-                        title={bug.fixed ? 'Сделать неактуальным' : 'Пометить как исправлено'}>
-                        {bug.fixed ? <FaTimes /> : <FaRocket />}{' '}
-                        {bug.fixed ? 'Неактуально' : 'Исправлено'}
-                      </button>
-                      {user.email === 'pesherkino@gmail.com' && (
+                  {user &&
+                    (user.email === 'pesherkino@gmail.com' || bug.user_email === user.email) && (
+                      <div className="bug-item-actions">
                         <button
-                          className="bug-delete-btn"
+                          className={`bug-fixed-toggle${bug.fixed ? ' active' : ''}`}
                           type="button"
-                          onClick={() => handleDelete(bug)}
-                          title="Удалить баг">
-                          <FaTimes />
+                          onClick={() => handleToggleFixed(bug)}
+                          title={bug.fixed ? 'Сделать неактуальным' : 'Пометить как исправлено'}>
+                          {bug.fixed ? <FaTimes /> : <FaRocket />}{' '}
+                          {bug.fixed ? 'Неактуально' : 'Исправлено'}
                         </button>
-                      )}
-                    </div>
-                  )}
+                        {user.email === 'pesherkino@gmail.com' && (
+                          <button
+                            className="bug-delete-btn"
+                            type="button"
+                            onClick={() => handleDelete(bug)}
+                            title="Удалить баг">
+                            <FaTimes />
+                          </button>
+                        )}
+                      </div>
+                    )}
                 </div>
               </motion.li>
             ))}
