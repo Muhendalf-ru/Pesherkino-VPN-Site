@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://pesherkino.ru/sitemap.xml 
+Sitemap: https://vpn.pesherkino.ru/sitemap.xml 
