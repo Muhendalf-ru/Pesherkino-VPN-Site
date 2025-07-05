@@ -4,6 +4,7 @@ const Status = lazy(() => import('./pages/StatusPage'));
 import './styles/App.css';
 const WikiPage = lazy(() => import('./pages/WikiPage'));
 const AchievementsPage = lazy(() => import('./pages/AchievementsPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
 import CosmicSpinner from './components/ui/CosmicSpinner';
 import NotFound from './pages/NotFound';
 import MainPage from './pages/MainPage';
@@ -43,6 +44,14 @@ function App() {
           element={
             <Suspense fallback={<CosmicSpinner />}>
               <BugTrackerPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <Suspense fallback={<CosmicSpinner />}>
+              <AdminPage />
             </Suspense>
           }
         />
